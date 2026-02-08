@@ -1,0 +1,29 @@
+{
+    "model": "yolov8n-eco",
+    "version": "1.0.0",
+    "inputSize": 640,
+    "classes": [
+        "tree",
+        "solar_panel",
+        "ev_charger",
+        "recycling_bin",
+        "bicycle",
+        "reusable_bag"
+    ],
+    "tokenRewards": {
+        "tree": 10,
+        "solar_panel": 25,
+        "ev_charger": 15,
+        "recycling_bin": 5,
+        "bicycle": 3,
+        "reusable_bag": 2
+    },
+    "minConfidence": {
+        "tree": 0.80,
+        "solar_panel": 0.85,
+        "ev_charger": 0.80,
+        "recycling_bin": 0.75,
+        "bicycle": 0.75,
+        "reusable_bag": 0.75
+    }
+}

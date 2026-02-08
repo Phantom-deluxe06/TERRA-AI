@@ -3,6 +3,8 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
+import { Web3Provider } from "@/components/providers/web3-provider";
+import { AuthProvider } from "@/components/providers/auth-provider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -13,8 +15,6 @@ const jetbrainsMono = JetBrains_Mono({
     subsets: ["latin"],
     variable: "--font-jetbrains-mono",
 });
-
-import { Web3Provider } from "@/components/providers/web3-provider";
 
 export const metadata: Metadata = {
     title: "TERRA AI | Decentralized Climate Verification",
@@ -35,11 +35,14 @@ export default function RootLayout({
                     "min-h-screen bg-carbon-dark antialiased"
                 )}
             >
-                <Web3Provider>
-                    <main>{children}</main>
-                    <Toaster position="top-right" richColors />
-                </Web3Provider>
+                <AuthProvider>
+                    <Web3Provider>
+                        <main>{children}</main>
+                        <Toaster position="top-right" richColors />
+                    </Web3Provider>
+                </AuthProvider>
             </body>
         </html>
     );
 }
+

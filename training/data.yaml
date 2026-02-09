@@ -1,0 +1,20 @@
+# Terra AI Eco-Detection Dataset Configuration
+# YOLOv8 format
+
+# Dataset paths (relative to this file)
+path: ./datasets/eco-detection
+train: train/images
+val: valid/images
+test: test/images
+
+# Number of classes
+nc: 6
+
+# Class names (MUST match order in verify.ts)
+names:
+  0: tree
+  1: solar_panel
+  2: ev_charger
+  3: recycling_bin
+  4: bicycle
+  5: reusable_bag

@@ -75,37 +75,39 @@ export function ImageUpload({ onImageLoad, isProcessing, className }: ImageUploa
                     onDragLeave={() => setIsDragging(false)}
                     onDrop={handleDrop}
                     className={cn(
-                        "flex flex-col items-center justify-center gap-4 p-8 rounded-2xl border-2 border-dashed cursor-pointer transition-all duration-200",
+                        "flex flex-col items-center justify-center gap-6 p-12 rounded-none border-4 border-dashed cursor-pointer transition-all duration-300 bg-white",
                         isDragging
-                            ? "border-earth-green bg-earth-green/10"
-                            : "border-slate-gray/30 hover:border-earth-green/50 hover:bg-white/5"
+                            ? "border-neo-pink bg-neo-pink/10 shadow-brutal translate-x-[-2px] translate-y-[-2px]"
+                            : "border-black hover:border-neo-lime hover:bg-neo-lime/5"
                     )}
                 >
-                    <div className="p-4 rounded-full bg-earth-green/10">
-                        <Upload className="w-8 h-8 text-earth-green" />
+                    <div className="p-6 border-3 border-black bg-neo-lime shadow-brutal">
+                        <Upload className="w-10 h-10 text-black" />
                     </div>
                     <div className="text-center">
-                        <p className="text-white font-medium">Drop your image here</p>
-                        <p className="text-sm text-slate-gray mt-1">or click to browse</p>
+                        <p className="text-2xl font-black uppercase text-black tracking-tighter">Capture Action</p>
+                        <p className="text-lg font-bold text-black/60 mt-1 uppercase">Drop file or click to browse</p>
                     </div>
-                    <p className="text-xs text-slate-gray/70">
-                        Supports: JPEG, PNG, WebP (max 10MB)
-                    </p>
+                    <div className="flex gap-2">
+                        {['JPG', 'PNG', 'WEBP'].map(ext => (
+                            <span key={ext} className="px-2 py-0.5 border-2 border-black bg-neo-yellow text-[10px] font-black">{ext}</span>
+                        ))}
+                    </div>
                 </div>
             ) : (
-                <div className="relative rounded-2xl overflow-hidden border border-white/10">
+                <div className="relative rounded-none border-4 border-black bg-white shadow-brutal overflow-hidden">
                     <img
                         ref={imageRef}
                         src={preview}
                         alt="Uploaded preview"
-                        className="w-full h-auto max-h-[400px] object-contain bg-black/50"
+                        className="w-full h-auto max-h-[450px] object-contain"
                     />
 
                     {isProcessing && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                            <div className="flex flex-col items-center gap-3">
-                                <Loader2 className="w-10 h-10 text-earth-green animate-spin" />
-                                <p className="text-white font-medium">Analyzing image...</p>
+                        <div className="absolute inset-0 flex items-center justify-center bg-neo-lime/80 backdrop-blur-none border-4 border-black border-inset animate-pulse">
+                            <div className="flex flex-col items-center gap-4 bg-white p-6 border-4 border-black shadow-brutal">
+                                <Loader2 className="w-12 h-12 text-black animate-spin" />
+                                <p className="text-2xl font-black uppercase text-black tracking-tighter">AI Scanning...</p>
                             </div>
                         </div>
                     )}

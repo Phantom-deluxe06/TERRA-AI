@@ -5,20 +5,21 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
 const buttonVariants = cva(
-    "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-earth-green disabled:opacity-50 disabled:pointer-events-none",
+    "inline-flex items-center justify-center rounded-none font-bold transition-all border-2 border-black active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:pointer-events-none",
     {
         variants: {
             variant: {
-                primary: "bg-eco-gradient text-white hover:scale-[1.02] hover:shadow-glow-green",
-                secondary: "bg-slate-800 text-white hover:bg-slate-700",
-                outline: "border border-earth-green/30 bg-transparent text-earth-green hover:bg-earth-green/10",
-                ghost: "bg-transparent hover:bg-slate-800 text-white",
-                error: "bg-error text-white hover:bg-error/90",
+                primary: "bg-neo-lime text-black shadow-brutal hover:bg-neo-lime/90",
+                secondary: "bg-neo-pink text-black shadow-brutal hover:bg-neo-pink/90",
+                outline: "bg-white text-black shadow-brutal hover:bg-slate-50",
+                ghost: "border-transparent bg-transparent hover:bg-black/5 text-black",
+                error: "bg-neo-orange text-black shadow-brutal hover:bg-neo-orange/90",
+                purple: "bg-neo-purple text-black shadow-brutal hover:bg-neo-purple/90",
             },
             size: {
                 sm: "h-8 px-3 text-sm",
-                md: "h-10 px-4 text-base",
-                lg: "h-12 px-8 text-lg font-semibold",
+                md: "h-11 px-6 text-base",
+                lg: "h-14 px-10 text-xl uppercase tracking-wider",
                 icon: "h-10 w-10",
             },
         },

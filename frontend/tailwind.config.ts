@@ -11,6 +11,14 @@ const config: Config = {
             colors: {
                 background: "var(--background)",
                 foreground: "var(--foreground)",
+                "neo-lime": "#BFFF00",
+                "neo-pink": "#FF6B9D",
+                "neo-orange": "#FF6B35",
+                "neo-purple": "#8B5CF6",
+                "neo-yellow": "#FFE500",
+                "neo-mint": "#98FF98",
+                "neo-white": "#FFFFFF",
+                "neo-black": "#000000",
                 "earth-green": {
                     DEFAULT: "#10B981",
                     hover: "#059669",
@@ -30,6 +38,7 @@ const config: Config = {
                 info: "#3B82F6",
             },
             backgroundImage: {
+                "neo-gradient": "linear-gradient(135deg, #BFFF00 0%, #FF6B9D 100%)",
                 "eco-gradient": "linear-gradient(135deg, #10B981 0%, #0EA5E9 100%)",
                 "carbon-gradient": "linear-gradient(180deg, #0F172A 0%, #1E293B 100%)",
                 "verification-glow": "linear-gradient(90deg, #14B8A6 0%, #10B981 50%, #22C55E 100%)",
@@ -39,13 +48,21 @@ const config: Config = {
                 primary: ["var(--font-inter)", "sans-serif"],
                 mono: ["var(--font-jetbrains-mono)", "monospace"],
             },
+            borderWidth: {
+                '3': '3px',
+                '4': '4px',
+            },
             borderRadius: {
-                sm: "6px",
-                md: "8px",
-                lg: "12px",
-                xl: "16px",
+                none: "0px",
+                sm: "2px",
+                md: "4px",
+                lg: "8px",
+                xl: "12px",
             },
             boxShadow: {
+                brutal: "4px 4px 0px #000000",
+                "brutal-lg": "8px 8px 0px #000000",
+                "brutal-xl": "8px 8px 0 #000000",
                 sm: "0 1px 2px rgba(0, 0, 0, 0.3)",
                 md: "0 4px 6px rgba(0, 0, 0, 0.4)",
                 lg: "0 10px 15px rgba(0, 0, 0, 0.5)",

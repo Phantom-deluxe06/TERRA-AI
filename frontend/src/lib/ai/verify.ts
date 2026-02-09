@@ -34,15 +34,37 @@ const INPUT_SIZE = 640;
 
 // Token rewards per action type (from TECH_RULES.md)
 const TOKEN_REWARDS: Record<string, { reward: number; minConfidence: number }> = {
+    // Eco-specific classes (for custom trained model)
     tree: { reward: 10, minConfidence: 0.80 },
     solar_panel: { reward: 25, minConfidence: 0.85 },
     ev_charger: { reward: 15, minConfidence: 0.80 },
     recycling_bin: { reward: 5, minConfidence: 0.75 },
     bicycle: { reward: 3, minConfidence: 0.75 },
     reusable_bag: { reward: 2, minConfidence: 0.75 },
+    // COCO class mappings (for pre-trained model testing)
+    'potted plant': { reward: 10, minConfidence: 0.60 }, // Maps to tree
+    'car': { reward: 0, minConfidence: 0.50 },           // No reward but detected
+    'person': { reward: 0, minConfidence: 0.50 },        // No reward but detected
 };
 
-const CLASS_LABELS = Object.keys(TOKEN_REWARDS);
+// COCO 80 class labels (YOLOv8 pre-trained model)
+const COCO_CLASS_LABELS = [
+    'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck',
+    'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench',
+    'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra',
+    'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
+    'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
+    'skateboard', 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup',
+    'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
+    'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+    'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse',
+    'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink',
+    'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier',
+    'toothbrush'
+];
+
+// Use COCO labels for pre-trained model (switch to custom when trained)
+const CLASS_LABELS = COCO_CLASS_LABELS;
 
 // ============================================
 // MODEL SESSION SINGLETON

@@ -10,11 +10,11 @@ interface PageLayoutProps {
 
 export function PageLayout({ children, showSidebar = true }: PageLayoutProps) {
     return (
-        <div className="flex min-h-screen bg-carbon-dark">
+        <div className="flex min-h-screen bg-white">
             {showSidebar && <Sidebar />}
             <div className="flex flex-1 flex-col">
                 <Navbar />
-                <main className="flex-1 overflow-y-auto p-6">
+                <main className="flex-1 overflow-y-auto p-4 sm:p-8">
                     <div className="mx-auto max-w-7xl">
                         {children}
                     </div>

@@ -36,23 +36,23 @@ export function Sidebar() {
     return (
         <aside
             className={cn(
-                "relative flex flex-col border-r border-white/5 bg-carbon-dark transition-all duration-300",
-                isCollapsed ? "w-[72px]" : "w-[260px]"
+                "relative flex flex-col border-r-4 border-black bg-white transition-all duration-300 shadow-[4px_0_0_0_#000]",
+                isCollapsed ? "w-[80px]" : "w-[280px]"
             )}
         >
-            <div className="flex h-16 items-center border-b border-white/5 px-4">
+            <div className="flex h-20 items-center border-b-4 border-black px-4 bg-neo-lime">
                 {!isCollapsed && (
-                    <span className="text-lg font-bold text-white">TERRA <span className="text-earth-green">AI</span></span>
+                    <span className="text-xl font-black uppercase tracking-tighter text-black">TERRA <span className="text-neo-pink">AI</span></span>
                 )}
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="ml-auto rounded-md p-1.5 text-slate-gray hover:bg-slate-800 hover:text-white transition-colors"
+                    className="ml-auto border-2 border-black bg-white p-1.5 text-black hover:bg-neo-pink transition-all"
                 >
                     {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
                 </button>
             </div>
 
-            <nav className="flex-1 space-y-1 p-2">
+            <nav className="flex-1 space-y-2 p-3 pt-6">
                 {menuItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
@@ -60,27 +60,27 @@ export function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all group",
+                                "flex items-center gap-3 border-2 transition-all group px-3 py-3 text-sm font-black uppercase tracking-tight",
                                 isActive
-                                    ? "bg-earth-green/10 text-earth-green border-l-2 border-earth-green"
-                                    : "text-slate-gray hover:bg-slate-800/50 hover:text-white"
+                                    ? "bg-neo-lime text-black border-black shadow-[4px_4px_0_#000] translate-x-[-2px] translate-y-[-2px]"
+                                    : "text-black border-transparent hover:border-black hover:bg-neo-lime/10"
                             )}
                         >
-                            <item.icon size={20} className={cn(isActive ? "text-earth-green" : "text-slate-gray group-hover:text-white")} />
+                            <item.icon size={22} className="text-black" strokeWidth={isActive ? 3 : 2} />
                             {!isCollapsed && <span>{item.name}</span>}
                         </Link>
                     );
                 })}
             </nav>
 
-            <div className="border-t border-white/5 p-2 pb-6">
+            <div className="border-t-4 border-black p-3 pb-8">
                 {secondaryItems.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-gray hover:bg-slate-800/50 hover:text-white transition-all"
+                        className="flex items-center gap-3 border-2 border-transparent px-3 py-2 text-sm font-bold uppercase tracking-tight text-black hover:border-black hover:bg-neo-pink/10 transition-all"
                     >
-                        <item.icon size={20} />
+                        <item.icon size={20} className="text-black" />
                         {!isCollapsed && <span>{item.name}</span>}
                     </Link>
                 ))}

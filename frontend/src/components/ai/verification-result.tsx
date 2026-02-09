@@ -27,31 +27,32 @@ export function VerificationResultDisplay({ result, className }: VerificationRes
     const { isVerified, score, detections, tokensEarned, actionType } = result;
 
     return (
-        <div className={cn("space-y-4", className)}>
+        <div className={cn("space-y-6", className)}>
             {/* Status Card */}
             <Card className={cn(
-                "p-6 border-2",
+                "p-8 border-4 border-black shadow-brutal",
                 isVerified
-                    ? "border-earth-green/50 bg-earth-green/5"
-                    : "border-alert-red/50 bg-alert-red/5"
+                    ? "bg-neo-lime"
+                    : "bg-neo-orange"
             )}>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-6">
                     {isVerified ? (
-                        <CheckCircle className="w-12 h-12 text-earth-green" />
+                        <div className="bg-white border-3 border-black p-3 shadow-[4px_4px_0_#000]">
+                            <CheckCircle className="w-12 h-12 text-black" />
+                        </div>
                     ) : (
-                        <XCircle className="w-12 h-12 text-alert-red" />
+                        <div className="bg-white border-3 border-black p-3 shadow-[4px_4px_0_#000]">
+                            <XCircle className="w-12 h-12 text-black" />
+                        </div>
                     )}
                     <div>
-                        <h3 className={cn(
-                            "text-2xl font-bold",
-                            isVerified ? "text-earth-green" : "text-alert-red"
-                        )}>
-                            {isVerified ? "Verified!" : "Not Verified"}
+                        <h3 className="text-4xl font-black uppercase tracking-tighter text-black italic">
+                            {isVerified ? "Verified!" : "Action Not Found"}
                         </h3>
-                        <p className="text-slate-gray">
+                        <p className="text-black font-bold text-lg leading-tight mt-1">
                             {isVerified
-                                ? `Eco-action detected with ${(score * 100).toFixed(1)}% confidence`
-                                : "No valid eco-action detected in this image"
+                                ? `Eco-asset detected with ${(score * 100).toFixed(1)}% confidence score.`
+                                : "AI could not verify a valid environmental action in this scan."
                             }
                         </p>
                     </div>
@@ -60,15 +61,18 @@ export function VerificationResultDisplay({ result, className }: VerificationRes
 
             {/* Token Reward */}
             {isVerified && (
-                <Card className="p-6 bg-gradient-to-r from-earth-green/20 to-transparent border-earth-green/30">
-                    <div className="flex items-center justify-between">
+                <Card className="p-8 bg-neo-pink border-4 border-black shadow-brutal text-white overflow-hidden relative">
+                    <div className="absolute -right-4 -bottom-4 opacity-20 transform rotate-12">
+                        {actionType && ICON_MAP[actionType] && React.createElement(ICON_MAP[actionType], { size: 120 })}
+                    </div>
+                    <div className="flex items-center justify-between relative z-10">
                         <div>
-                            <p className="text-sm text-slate-gray uppercase tracking-wide">Tokens Earned</p>
-                            <p className="text-4xl font-bold text-earth-green">+{tokensEarned} TERRA</p>
+                            <p className="text-xl font-black uppercase tracking-widest text-white/80">Claimable Reward</p>
+                            <p className="text-6xl font-black italic drop-shadow-[4px_4px_0_rgba(0,0,0,0.5)]">+{tokensEarned} TERRA</p>
                         </div>
                         {actionType && ICON_MAP[actionType] && (
-                            <div className="p-4 rounded-full bg-earth-green/20">
-                                {React.createElement(ICON_MAP[actionType], { className: "w-10 h-10 text-earth-green" })}
+                            <div className="h-20 w-20 border-4 border-black bg-white flex items-center justify-center shadow-[6px_6px_0_#000]">
+                                {React.createElement(ICON_MAP[actionType], { className: "w-12 h-12 text-black" })}
                             </div>
                         )}
                     </div>
@@ -92,23 +96,28 @@ export function VerificationResultDisplay({ result, className }: VerificationRes
 
 function DetectionItem({ detection }: { detection: DetectionResult }) {
     const { label, confidence } = detection;
-    const { reward, minConfidence } = getTokenRewardInfo(label);
+    const { reward } = getTokenRewardInfo(label);
     const confPercent = confidence * 100;
     const Icon = ICON_MAP[label] || Leaf;
 
     return (
-        <div className="flex items-center gap-4 p-3 rounded-lg bg-white/5">
-            <div className="p-2 rounded-lg bg-earth-green/10">
-                <Icon className="w-5 h-5 text-earth-green" />
+        <div className="flex items-center gap-6 p-4 border-3 border-black bg-white shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
+            <div className="h-14 w-14 border-2 border-black bg-neo-lime flex items-center justify-center shadow-[3px_3px_0_#000]">
+                <Icon className="w-8 h-8 text-black" strokeWidth={3} />
             </div>
             <div className="flex-1">
-                <div className="flex items-center gap-2">
-                    <span className="font-medium text-white capitalize">{label.replace('_', ' ')}</span>
-                    <Badge variant="secondary" className="text-xs">+{reward} TERRA</Badge>
+                <div className="flex items-center justify-between">
+                    <span className="text-2xl font-black uppercase tracking-tighter text-black italic">{label.replace('_', ' ')}</span>
+                    <Badge variant="secondary" className="scale-110 shadow-[3px_3px_0_#000]">+{reward} TERRA</Badge>
                 </div>
-                <div className="flex items-center gap-2 mt-1">
-                    <Progress value={confPercent} className="flex-1 h-2" />
-                    <span className="text-sm text-slate-gray w-12">{confPercent.toFixed(0)}%</span>
+                <div className="flex items-center gap-4 mt-2">
+                    <div className="flex-1 h-4 border-2 border-black bg-white p-[2px]">
+                        <div
+                            className="h-full bg-neo-pink border-r-2 border-black"
+                            style={{ width: `${confPercent}%` }}
+                        />
+                    </div>
+                    <span className="text-lg font-black text-black w-14">{confPercent.toFixed(0)}%</span>
                 </div>
             </div>
         </div>

@@ -158,7 +158,7 @@ export default function DashboardPage() {
 
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium text-slate-gray">Platform Impact</CardTitle>
+                                <CardTitle className="text-sm font-medium text-slate-gray">Platform Rank</CardTitle>
                                 <BarChart3 className="h-4 w-4 text-slate-gray" />
                             </CardHeader>
                             <CardContent>
@@ -170,6 +170,27 @@ export default function DashboardPage() {
                                 </p>
                             </CardContent>
                         </Card>
+                    </div>
+
+                    {/* IoT Control Center */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 bg-neo-lime border-3 border-black shadow-brutal flex items-center justify-center text-black">
+                                <Cpu className="w-6 h-6" />
+                            </div>
+                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">IoT Control Center</h2>
+                        </div>
+
+                        <IotOracle />
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div className="lg:col-span-2">
+                                <IotMap />
+                            </div>
+                            <div className="lg:col-span-1">
+                                <TamperCenter />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">

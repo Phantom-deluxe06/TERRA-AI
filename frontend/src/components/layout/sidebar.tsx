@@ -11,7 +11,12 @@ import {
     HelpCircle,
     ChevronLeft,
     ChevronRight,
-    BarChart3
+    BarChart3,
+    Droplets,
+    Waves,
+    Fingerprint,
+    Ghost,
+    Link2
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -22,6 +27,14 @@ const menuItems = [
     { name: "Verify", href: "/verify", icon: Search },
     { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
     { name: "Reports", href: "/reports", icon: BarChart3 },
+];
+
+const monitoringItems = [
+    { name: "Water Stress", href: "/dashboard/water-stress", icon: Droplets },
+    { name: "Midnight Pipe", href: "/dashboard/midnight-pipe", icon: Waves },
+    { name: "Accountability", href: "/dashboard/greencrowding", icon: Fingerprint },
+    { name: "Methane Feed", href: "/dashboard/methane", icon: Ghost },
+    { name: "Supply Chain", href: "/dashboard/supply-chain", icon: Link2 },
 ];
 
 const secondaryItems = [
@@ -67,6 +80,31 @@ export function Sidebar() {
                             )}
                         >
                             <item.icon size={22} className="text-black" strokeWidth={isActive ? 3 : 2} />
+                            {!isCollapsed && <span>{item.name}</span>}
+                        </Link>
+                    );
+                })}
+
+                {!isCollapsed && (
+                    <div className="px-3 pt-4 pb-2">
+                        <p className="text-[10px] font-black uppercase text-slate-gray tracking-widest">Fraud Oversight</p>
+                    </div>
+                )}
+
+                {monitoringItems.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                                "flex items-center gap-3 border-2 transition-all group px-3 py-2 text-sm font-black uppercase tracking-tight",
+                                isActive
+                                    ? "bg-neo-pink text-white border-black shadow-[4px_4px_0_#000] translate-x-[-2px] translate-y-[-2px]"
+                                    : "text-black border-transparent hover:border-black hover:bg-neo-pink/10"
+                            )}
+                        >
+                            <item.icon size={18} className={isActive ? "text-white" : "text-black"} strokeWidth={isActive ? 3 : 2} />
                             {!isCollapsed && <span>{item.name}</span>}
                         </Link>
                     );

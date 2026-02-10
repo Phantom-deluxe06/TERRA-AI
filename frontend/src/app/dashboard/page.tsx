@@ -48,7 +48,7 @@ export default function DashboardPage() {
                 const { data: userData, error: userError } = await supabase
                     .from('Users')
                     .select('id, total_tokens, total_co2_offset')
-                    .eq('wallet_address', address.toLowerCase())
+                    .eq('wallet_address', (address as string).toLowerCase())
                     .single();
 
                 if (userError && userError.code !== 'PGRST116') {
@@ -72,7 +72,7 @@ export default function DashboardPage() {
                     const { data: addressActions, count: addressCount } = await supabase
                         .from('EcoActions')
                         .select('*', { count: 'exact' })
-                        .eq('wallet_address', address.toLowerCase())
+                        .eq('wallet_address', (address as string).toLowerCase())
                         .order('created_at', { ascending: false })
                         .limit(5);
 

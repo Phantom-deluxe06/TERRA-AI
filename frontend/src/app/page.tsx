@@ -49,24 +49,18 @@ export default function Home() {
                     <Leaf size={48} />
                 </motion.div>
 
-                <motion.h1
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
+                <h1
                     className="mb-6 text-5xl font-black tracking-tighter sm:text-8xl uppercase text-black"
                 >
                     The Future of <br />
                     <span className="bg-neo-lime px-4 py-2 border-4 border-black inline-block transform -rotate-2">Climate</span> <span className="bg-neo-pink px-4 py-2 border-4 border-black inline-block transform rotate-1 text-white">Trust</span>
-                </motion.h1>
+                </h1>
 
-                <motion.p
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
+                <p
                     className="mb-10 max-w-2xl text-xl text-black sm:text-2xl font-black bg-white/50 backdrop-blur-sm border-2 border-black inline-block p-4"
                 >
                     AI-verified. Blockchain-secured. Zero-trust environmental action.
-                </motion.p>
+                </p>
 
                 <motion.div
                     initial={{ y: 20, opacity: 0 }}

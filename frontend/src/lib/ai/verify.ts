@@ -306,3 +306,138 @@ export function getTokenRewardInfo(label: string) {
 export function getAllDetectableLabels() {
     return CLASS_LABELS;
 }
+
+// ============================================
+// SATELLITE BEFORE/AFTER COMPARISON
+// ============================================
+
+export interface SatelliteComparisonResult {
+    changeDetected: boolean;
+    beforeDetections: DetectionResult[];
+    afterDetections: DetectionResult[];
+    newDetections: DetectionResult[];      // Items found in "after" but not "before"
+    changeSummary: string;
+    activityType: string | null;
+    tokensEarned: number;
+    confidenceScore: number;
+}
+
+/**
+ * Compare before/after satellite images for eco-activity changes
+ * Runs YOLO detection on both images and compares results
+ */
+export async function compareBeforeAfter(
+    beforeImage: HTMLImageElement,
+    afterImage: HTMLImageElement,
+    activityType?: string
+): Promise<SatelliteComparisonResult> {
+    console.log('[AI] Starting before/after comparison...');
+
+    try {
+        // Run verification on both images
+        const [beforeResult, afterResult] = await Promise.all([
+            verifyEcoAction(beforeImage),
+            verifyEcoAction(afterImage),
+        ]);
+
+        console.log('[AI] Before detections:', beforeResult.detections.length);
+        console.log('[AI] After detections:', afterResult.detections.length);
+
+        // Determine eco-relevant detections (filter out non-eco classes)
+        const ecoLabels = ['tree', 'solar_panel', 'ev_charger', 'recycling_bin', 'bicycle', 'reusable_bag', 'potted plant'];
+
+        const beforeEco = beforeResult.detections.filter(d => ecoLabels.includes(d.label));
+        const afterEco = afterResult.detections.filter(d => ecoLabels.includes(d.label));
+
+        // Calculate new detections (in after but exceeding before count)
+        const beforeCounts: Record<string, number> = {};
+        const afterCounts: Record<string, number> = {};
+
+        beforeEco.forEach(d => {
+            beforeCounts[d.label] = (beforeCounts[d.label] || 0) + 1;
+        });
+        afterEco.forEach(d => {
+            afterCounts[d.label] = (afterCounts[d.label] || 0) + 1;
+        });
+
+        // Find new items (more in after than before)
+        const newDetections: DetectionResult[] = [];
+        const changes: string[] = [];
+
+        for (const det of afterEco) {
+            const beforeCount = beforeCounts[det.label] || 0;
+            const afterCount = afterCounts[det.label] || 0;
+            if (afterCount > beforeCount) {
+                newDetections.push(det);
+                const diff = afterCount - beforeCount;
+                const changeMsg = `+${diff} new ${det.label.replace('_', ' ')}${diff > 1 ? 's' : ''}`;
+                if (!changes.includes(changeMsg)) changes.push(changeMsg);
+            }
+        }
+
+        // If after has any eco-detections at all, consider it a positive result
+        // (since "before" is a wider zoom that may miss details)
+        const hasEcoActivity = afterEco.length > 0;
+        const hasNewActivity = newDetections.length > 0 || afterEco.length > beforeEco.length;
+
+        // Calculate tokens
+        let tokensEarned = 0;
+        if (hasEcoActivity) {
+            for (const det of afterEco) {
+                tokensEarned += TOKEN_REWARDS[det.label]?.reward ?? 0;
+            }
+        }
+
+        // Build summary
+        let changeSummary: string;
+        if (hasNewActivity && changes.length > 0) {
+            changeSummary = `Eco-activity confirmed! Changes detected: ${changes.join(', ')}`;
+        } else if (hasEcoActivity) {
+            changeSummary = `Eco-assets detected in current view: ${afterEco.length} environmental item${afterEco.length > 1 ? 's' : ''} found`;
+        } else {
+            changeSummary = 'No significant environmental activity detected at this location. Try a different area or zoom level.';
+        }
+
+        // Confidence score
+        const confidenceScore = afterEco.length > 0
+            ? afterEco.reduce((sum, d) => sum + d.confidence, 0) / afterEco.length
+            : 0;
+
+        // Determine primary activity
+        let primaryActivity: string | null = activityType || null;
+        if (!primaryActivity && afterEco.length > 0) {
+            let highest = 0;
+            for (const det of afterEco) {
+                const reward = TOKEN_REWARDS[det.label]?.reward ?? 0;
+                if (reward > highest) {
+                    highest = reward;
+                    primaryActivity = det.label;
+                }
+            }
+        }
+
+        return {
+            changeDetected: hasEcoActivity,
+            beforeDetections: beforeResult.detections,
+            afterDetections: afterResult.detections,
+            newDetections,
+            changeSummary,
+            activityType: primaryActivity,
+            tokensEarned,
+            confidenceScore,
+        };
+    } catch (error) {
+        console.error('[AI] Comparison failed:', error);
+        return {
+            changeDetected: false,
+            beforeDetections: [],
+            afterDetections: [],
+            newDetections: [],
+            changeSummary: 'AI analysis failed. Please try again.',
+            activityType: null,
+            tokensEarned: 0,
+            confidenceScore: 0,
+        };
+    }
+}
+

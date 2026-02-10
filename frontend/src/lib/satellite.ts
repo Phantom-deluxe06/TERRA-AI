@@ -1,16 +1,14 @@
 /**
  * TERRA AI - Satellite Image Service
- * Fetches satellite imagery from Google Maps Static API
+ * Fetches satellite imagery via local API proxy (bypasses CORS)
  */
-
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export interface SatelliteImageOptions {
     lat: number;
     lng: number;
-    zoom?: number;        // 1-21 (default: 18 for detailed view)
-    width?: number;       // Image width in pixels (max 640 for free tier)
-    height?: number;      // Image height in pixels (max 640 for free tier)
+    zoom?: number;
+    width?: number;
+    height?: number;
 }
 
 export interface SatelliteImageResult {
@@ -21,8 +19,14 @@ export interface SatelliteImageResult {
     timestamp: string;
 }
 
+export interface BeforeAfterImages {
+    before: SatelliteImageResult;
+    after: SatelliteImageResult;
+    location: { lat: number; lng: number; address?: string };
+}
+
 /**
- * Generate a satellite image URL for the given coordinates
+ * Generate a satellite image URL via the local proxy (CORS-safe)
  */
 export function getSatelliteImageUrl(options: SatelliteImageOptions): string {
     const {
@@ -33,68 +37,95 @@ export function getSatelliteImageUrl(options: SatelliteImageOptions): string {
         height = 640,
     } = options;
 
-    if (!GOOGLE_MAPS_API_KEY) {
-        console.error('[Satellite] Google Maps API key not configured');
-        throw new Error('Google Maps API key not configured');
-    }
+    // Use local proxy to avoid CORS issues with Google Maps
+    const params = new URLSearchParams({
+        lat: lat.toString(),
+        lng: lng.toString(),
+        zoom: zoom.toString(),
+        width: width.toString(),
+        height: height.toString(),
+    });
 
-    const url = new URL('https://maps.googleapis.com/maps/api/staticmap');
-    url.searchParams.set('center', `${lat},${lng}`);
-    url.searchParams.set('zoom', zoom.toString());
-    url.searchParams.set('size', `${width}x${height}`);
-    url.searchParams.set('maptype', 'satellite');
-    url.searchParams.set('key', GOOGLE_MAPS_API_KEY);
-
-    return url.toString();
+    return `/api/satellite?${params.toString()}`;
 }
 
 /**
- * Fetch satellite image as a blob for processing
+ * Fetch before/after satellite images for comparison
+ * "Before" = wider zoom (area context), "After" = detailed zoom (current state)
  */
-export async function fetchSatelliteImage(
-    options: SatelliteImageOptions
-): Promise<SatelliteImageResult> {
-    const imageUrl = getSatelliteImageUrl(options);
+export function fetchBeforeAfterImages(
+    lat: number,
+    lng: number,
+    address?: string
+): BeforeAfterImages {
+    const beforeUrl = getSatelliteImageUrl({
+        lat,
+        lng,
+        zoom: ZOOM_PRESETS.BEFORE,
+        width: 640,
+        height: 640,
+    });
+
+    const afterUrl = getSatelliteImageUrl({
+        lat,
+        lng,
+        zoom: ZOOM_PRESETS.AFTER,
+        width: 640,
+        height: 640,
+    });
+
+    const now = new Date().toISOString();
 
     return {
-        imageUrl,
-        lat: options.lat,
-        lng: options.lng,
-        zoom: options.zoom ?? 18,
-        timestamp: new Date().toISOString(),
+        before: {
+            imageUrl: beforeUrl,
+            lat,
+            lng,
+            zoom: ZOOM_PRESETS.BEFORE,
+            timestamp: now,
+        },
+        after: {
+            imageUrl: afterUrl,
+            lat,
+            lng,
+            zoom: ZOOM_PRESETS.AFTER,
+            timestamp: now,
+        },
+        location: { lat, lng, address },
     };
 }
 
 /**
- * Get satellite image as HTMLImageElement for AI verification
+ * Load a satellite image as HTMLImageElement for AI processing
  */
 export async function loadSatelliteImageElement(
     options: SatelliteImageOptions
 ): Promise<HTMLImageElement> {
-    const { imageUrl } = await fetchSatelliteImage(options);
+    const imageUrl = getSatelliteImageUrl(options);
+    return loadImageFromUrl(imageUrl);
+}
 
+/**
+ * Load an image from URL as HTMLImageElement (CORS-safe via proxy)
+ */
+export async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error('Failed to load satellite image'));
-        img.src = imageUrl;
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = url;
     });
 }
 
 /**
- * Zoom level guide for satellite imagery
- * 
- * Zoom 14: ~1km view - city/region level
- * Zoom 16: ~250m view - neighborhood level
- * Zoom 18: ~50m view - building/lot level (recommended for verification)
- * Zoom 20: ~10m view - detailed structures
- * Zoom 21: ~5m view - maximum detail
+ * Zoom level presets
  */
 export const ZOOM_PRESETS = {
-    REGION: 14,
+    BEFORE: 15,
     NEIGHBORHOOD: 16,
-    LOT: 18,          // Default - good for tree/solar detection
+    LOT: 18,
+    AFTER: 18,
     DETAILED: 20,
     MAXIMUM: 21,
 } as const;
@@ -103,5 +134,5 @@ export const ZOOM_PRESETS = {
  * Check if Google Maps API is configured
  */
 export function isGoogleMapsConfigured(): boolean {
-    return !!GOOGLE_MAPS_API_KEY;
+    return !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 }
